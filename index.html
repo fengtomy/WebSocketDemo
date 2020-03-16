@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Websocket Practice</title>
+</head>
+<body>
+  <input id="name" />
+  <textarea id="message"></textarea>
+  <button onclick="fire();">Send</button>
+  <div id="messages"></div>
+  <script>
+    const ws = new WebSocket("ws://localhost:3030");
+    ws.onopen = () => console.log("Now Connected");
+
+    const getElement = id => document.getElementById(id);
+    const addMessage = message => {
+      const pTag = document.createElement("p");
+      pTag.appendChild(document.createTextNode(message));
+      getElement("messages").appendChild(pTag);
+    };
+
+    ws.onmessage = event => {
+      const messages = JSON.parse(event.data);
+      messages.forEach(addMessage);
+    };
+
+    const fire = () => {
+      console.dir(getElement("message"));
+      const username = getElement("name").value || "***";
+      ws.send(`${username}: ${getElement("message").value}`);
+      getElement("message").value = "";
+    };
+  </script>
+</body>
+</html>
